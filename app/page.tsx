@@ -1,13 +1,22 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
+import { useAuth } from '@/src/hooks/useAuth';
+import { useSubscription } from '@/src/hooks/useSubscription';
+import { CheckoutButton } from '@/src/components/checkout/CheckoutButton';
+import { stripeProducts } from '@/src/stripe-config';
 
 export default function Page() {
     const [expandedChapter, setExpandedChapter] = useState(null);
+    const { user } = useAuth();
+    const { hasActiveSubscription } = useSubscription();
 
     const toggleChapter = (chapter) => {
         setExpandedChapter(expandedChapter === chapter ? null : chapter);
     };
+
+    const chatGptCourse = stripeProducts.find(p => p.name === 'CHAT GPT DETAILED VIDEO COURSE');
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 text-white">
@@ -29,9 +38,28 @@ export default function Page() {
                     <a href="#" className="text-white hover:text-gray-300 transition-colors">E-BOOKS</a>
                     <a href="#" className="text-white hover:text-gray-300 transition-colors">AI MASTERCLASS</a>
                 </div>
-                <button className="px-6 py-2 border border-white rounded-full text-white hover:bg-white hover:text-purple-900 transition-all duration-300">
-                    Login
-                </button>
+                <div className="flex items-center space-x-4">
+                    {user ? (
+                        <>
+                            {hasActiveSubscription && (
+                                <span className="text-green-400 text-sm font-medium">
+                                    ✓ Subscribed
+                                </span>
+                            )}
+                            <Link href="/dashboard">
+                                <button className="px-6 py-2 border border-white rounded-full text-white hover:bg-white hover:text-purple-900 transition-all duration-300">
+                                    Dashboard
+                                </button>
+                            </Link>
+                        </>
+                    ) : (
+                        <Link href="/login">
+                            <button className="px-6 py-2 border border-white rounded-full text-white hover:bg-white hover:text-purple-900 transition-all duration-300">
+                                Login
+                            </button>
+                        </Link>
+                    )}
+                </div>
             </nav>
 
             {/* Hero Section */}
@@ -88,9 +116,14 @@ export default function Page() {
                             </div>
                         </div>
 
-                        <button className="w-full lg:w-auto bg-green-500 hover:bg-green-600 px-12 py-4 font-bold text-xl text-white shadow-2xl hover:shadow-green-500/30 transform hover:scale-105 transition-all duration-300 rounded-full">
-                            Join Now
-                        </button>
+                        {chatGptCourse && (
+                            <CheckoutButton 
+                                product={chatGptCourse}
+                                className="w-full lg:w-auto bg-green-500 hover:bg-green-600 px-12 py-4 font-bold text-xl text-white shadow-2xl hover:shadow-green-500/30 transform hover:scale-105 transition-all duration-300 rounded-full"
+                            >
+                                {hasActiveSubscription ? 'Access Course' : 'Join Now'}
+                            </CheckoutButton>
+                        )}
 
                         <div className="flex items-center space-x-8">
                             <div className="flex items-center space-x-4">
@@ -122,7 +155,7 @@ export default function Page() {
                             {/* Person Image */}
                             <div className="w-96 h-96 relative">
                                 <img
-                                    src="/api/placeholder/400/500"
+                                    src="https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg"
                                     alt="Instructor"
                                     className="object-cover w-full h-full rounded-lg"
                                 />
@@ -166,7 +199,7 @@ export default function Page() {
                             </div>
 
                             <img
-                                src="/api/placeholder/800/450"
+                                src="https://images.pexels.com/photos/3184298/pexels-photo-3184298.jpeg"
                                 alt="Video thumbnail"
                                 className="w-full h-full object-cover opacity-80"
                             />
@@ -211,7 +244,7 @@ export default function Page() {
                         <div className="relative">
                             <div className="w-80 h-80 rounded-full bg-gradient-to-br from-purple-600 to-green-600 flex items-center justify-center">
                                 <img
-                                    src="/api/placeholder/300/300"
+                                    src="https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg"
                                     alt="Instructor explaining"
                                     className="w-full h-full object-cover rounded-full"
                                 />
@@ -247,7 +280,7 @@ export default function Page() {
                         <div className="relative">
                             <div className="w-80 h-80 rounded-full bg-gradient-to-br from-green-600 to-purple-600 flex items-center justify-center">
                                 <img
-                                    src="/api/placeholder/300/300"
+                                    src="https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg"
                                     alt="Person thinking"
                                     className="w-full h-full object-cover rounded-full"
                                 />
@@ -299,7 +332,7 @@ export default function Page() {
                         <div className="bg-gradient-to-br from-purple-900 to-blue-900 rounded-lg p-8">
                             <div className="mb-6">
                                 <img
-                                    src="/api/placeholder/400/200"
+                                    src="https://images.pexels.com/photos/3184639/pexels-photo-3184639.jpeg"
                                     alt="Course preview"
                                     className="w-full rounded-lg"
                                 />
@@ -333,9 +366,14 @@ export default function Page() {
                                 </div>
                             </div>
 
-                            <button className="w-full bg-green-600 hover:bg-green-700 py-4 font-semibold text-lg rounded-[36px]">
-                                Join Now
-                            </button>
+                            {chatGptCourse && (
+                                <CheckoutButton 
+                                    product={chatGptCourse}
+                                    className="w-full bg-green-600 hover:bg-green-700 py-4 font-semibold text-lg rounded-[36px]"
+                                >
+                                    {hasActiveSubscription ? 'Access Course' : 'Join Now'}
+                                </CheckoutButton>
+                            )}
                         </div>
                     </div>
                 </div>
